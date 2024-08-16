@@ -1,16 +1,51 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+/** @format */
+
+import React, { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../providers/AuthProvider";
+import { toast } from "react-toastify";
 
 const Register = () => {
-    return (
-        <section className="bg-white dark:bg-gray-900">
-         <h1 className="text-2xl mb-6 text-center font-bold">Please Register here</h1>
+   const { createUser, UpdateProfile, logOut,updateUserProfile } = useContext(AuthContext);
+   const navigate = useNavigate();
+
+
+   const handleRegister = async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const name = form.name.value;
+      const email = form.email.value;
+      const password = form.password.value;
+      // const photo = form.photoURL.value;
+
+      try {
+         const result = await createUser(email, password);
+         console.log(result);
+
+         //3. Save username and photo
+         await updateUserProfile(name );
+         navigate('/products')
+
+         
+         // navigate(from, { replace: true });
+        
+         toast.success("Registration is Successful");
+      } catch (err) {
+         // console.log(err);
+         toast.error(err.message);
+      }
+   };
+
+
+   return (
+      <section className="bg-white dark:bg-gray-900">
+         <h1 className="text-2xl mb-6 text-center font-bold">
+            Please Register here
+         </h1>
 
          <div className="container flex items-center justify-center px-6 mx-auto">
-            <form className="w-full border-2 p-4 rounded-2xl max-w-md">
-               <div className="flex justify-center mx-auto">
-                  
-               </div>
+            <form  onSubmit={handleRegister} className="w-full border-2 p-4 rounded-2xl max-w-md">
+               <div className="flex justify-center mx-auto"></div>
 
                <div className="relative flex items-center mt-8">
                   <span className="absolute">
@@ -63,31 +98,7 @@ const Register = () => {
                      placeholder="Email address"
                   />
                </div>
-               <div className="relative flex items-center mt-8">
-                  <span className="absolute">
-                     <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-6 h-6 mx-3 text-gray-300 dark:text-gray-500"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                     >
-                        <path
-                           strokeLinecap="round"
-                           strokeLinejoin="round"
-                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        />
-                     </svg>
-                  </span>
-
-                  <input
-                     type="text"
-                     name="photoURL"
-                     className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
-                     placeholder="PhotoURL"
-                  />
-               </div>
+          
 
                <div className="relative flex items-center mt-4">
                   <span className="absolute">
@@ -134,7 +145,7 @@ const Register = () => {
             </form>
          </div>
       </section>
-    );
+   );
 };
 
 export default Register;
