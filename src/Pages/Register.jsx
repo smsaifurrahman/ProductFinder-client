@@ -133,7 +133,7 @@ const Register = () => {
 
                   <div className="mt-6 text-center ">
                      <Link
-                        to={"/"}
+                        to={"/login"}
                         href="#"
                         className="text-sm  hover:underline dark:text-blue-400"
                      >
