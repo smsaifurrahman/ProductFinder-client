@@ -10,7 +10,7 @@ const router = createBrowserRouter([
       element: <Products></Products>,
     },
     {
-      path: "/login",
+      path: "/",
       element: <Login></Login>,
     },
     {
