@@ -12,24 +12,32 @@ const Products = () => {
    const [itemPerPage, setItemPerPage] = useState(6);
    const [productCount, setProductCount] = useState(0);
    const [currentPage, setCurrentPage] = useState(1);
-   const [search, setSearch] = useState('');
-
+   const [search, setSearch] = useState("");
+   const [sortOption, setSortOption] = useState("");
 
    const {
       data: products = [],
       isLoading,
       refetch,
    } = useQuery({
-      queryKey: ["products" , currentPage, itemPerPage,search],
+      queryKey: ["products", currentPage, itemPerPage, search, sortOption],
       queryFn: async () => {
-         const { data } = await axiosPublic(`/products?page=${currentPage}&size=${itemPerPage}&search=${search}`);
+         const { data } = await axiosPublic(
+            `/products?page=${currentPage}&size=${itemPerPage}&search=${search}&sort=${sortOption}`
+         );
          //   setProductCount(data.length)
          return data;
       },
    });
 
+   // Function to handle sorting change
+   const handleSortChange = (e) => {
+      const value = e.target.value;
+      setSortOption(value);
+   };
+
    const { data: productsCount = [] } = useQuery({
-      queryKey: ["products-count" , search],
+      queryKey: ["products-count", search],
       queryFn: async () => {
          const { data } = await axiosPublic(`/products-count?search=${search}`);
          console.log(data);
@@ -46,67 +54,73 @@ const Products = () => {
          .map((element) => element + 1),
    ];
 
-    // handle pagination button
-    const handlePaginationButton = (value) => {
+   // handle pagination button
+   const handlePaginationButton = (value) => {
       setCurrentPage(value);
    };
 
    // handle search
-   const handleSearch = e => {
+   const handleSearch = (e) => {
       e.preventDefault();
       const text = e.target.search.value;
-     setSearch(text)
-     }
-     console.log(search);
-  
-     if (isLoading)
-        return <span className="loading loading-dots loading-lg"></span>;
+      setSearch(text);
+   };
+   console.log(search);
 
-   // const {
-   //    data: products = [],
-   //    isLoading,
-   //    refetch,
-   // } = useQuery({
-   //    queryKey: ["products" , currentPage, itemPerPage,search],
-   //    queryFn: async () => {
-   //       const { data } = await axiosPublic(`/products`);
-   //       //   setProductCount(data.length)
-   //       return data;
-   //    },
-   // });
+   if (isLoading)
+      return <span className="loading loading-dots loading-lg"></span>;
+
    return (
       <div>
          <h1 className="text text-3xl text-center my-8 font-bold">
             Product Finder Products
          </h1>
 
-         <div className="flex items-center justify-center my-8">
-            <div className="w-96 flex flex-col items-center justify-center">
-               <form onSubmit={handleSearch}>
-                  <div className="flex p-1 overflow-hidden border rounded-lg    focus-within:ring focus-within:ring-opacity-40 focus-within:border-blue-400 focus-within:ring-blue-300">
-                     <input
-                        className="px-6 py-2 text-gray-700 placeholder-gray-500 bg-white outline-none focus:placeholder-transparent"
-                        type="text"
-                        name="search"
-                        placeholder="Search"
-                        aria-label="Enter Job Title"
-                     />
+         <div className="flex items-center">
+            <div className=" my-8">
+               <div className="w-96 flex flex-col items-center justify-center">
+                  <form onSubmit={handleSearch}>
+                     <div className="flex p-1 overflow-hidden border rounded-lg    focus-within:ring focus-within:ring-opacity-40 focus-within:border-blue-400 focus-within:ring-blue-300">
+                        <input
+                           className="px-6 py-2 text-gray-700 placeholder-gray-500 bg-white outline-none focus:placeholder-transparent"
+                           type="text"
+                           name="search"
+                           placeholder="Search"
+                           aria-label="Enter Job Title"
+                        />
 
-                     <button className="px-1 md:px-4 py-3 text-sm font-medium tracking-wider text-gray-100 uppercase transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:bg-gray-600 focus:outline-none">
-                        Search
-                     </button>
-                  </div>
-               </form>
+                        <button className="px-1 md:px-4 py-3 text-sm font-medium tracking-wider text-gray-100 uppercase transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:bg-gray-600 focus:outline-none">
+                           Search
+                        </button>
+                     </div>
+                  </form>
+               </div>
+            </div>
+
+            <div>
+               <select
+                  className="select select-primary w-full max-w-xs"
+                  onChange={handleSortChange}
+                  value={sortOption}
+               >
+                  <option disabled value="">
+                     Sort Products by
+                  </option>
+                  <option value="price">Price: Low to High</option>
+                  <option value="-price">Price: High to Low</option>
+                  <option value="-productCreationDate">Newest first</option>
+               </select>
             </div>
          </div>
+
          <div className=" px-2 md:px-0 grid grid-cols-1 md:grid-cols-3 gap-6">
             {products.map((product) => (
                <ProductCard key={product.id} product={product}></ProductCard>
             ))}
          </div>
 
-          {/* Paginations buttons */}
-          <div className="flex justify-center my-12">
+         {/* Paginations buttons */}
+         <div className="flex justify-center my-12">
             <button
                disabled={currentPage === 1}
                onClick={() => handlePaginationButton(currentPage - 1)}
