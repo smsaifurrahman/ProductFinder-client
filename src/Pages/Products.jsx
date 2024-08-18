@@ -20,6 +20,7 @@ const Products = () => {
    });
 
    // Available options
+
    const brandNames = [
       "TechCorp",
       "AudioPlus",
@@ -29,31 +30,25 @@ const Products = () => {
       "FitTrack",
       "ZenLife",
       "StrengthMax",
+      "CookMaster",
       "KitchenMaster",
       "CleanBot",
-      "CookMaster",
       "WashPro",
       "CoolMaster",
-      "HeatWave",
-      "StyleCo",
-      "Sporty",
-      "TimeTech",
-      "ChicStyle",
-      "UrbanWalk",
-      "ColdGear",
-      "ChargeUp",
       "BrewMaster",
-      "HomeControl",
-      "ShadeStyle",
-      "UrbanWear",
-      "SmilePro",
-   ];
+      "DryAir",
+      "SewMaster",
+      "HeatMaster",
+      "CleanMaster",
+      "WarmMaster"
+  ];
+  
 
    const categories = [
       "Electronics",
       "Health & Fitness",
       "Home Appliances",
-      "Fashion",
+     
    ];
 
    // Function to handle sorting change
@@ -98,6 +93,7 @@ const Products = () => {
          const { data } = await axiosPublic(
             `/products?page=${currentPage}&size=${itemPerPage}&search=${search}&sort=${sortOption}&brandName=${filters.brandName}&category=${filters.category}&priceRange=${filters.priceRange}`
          );
+         console.log(data);
          return data;
       },
    });
@@ -243,12 +239,12 @@ const Products = () => {
                </label>
             </div>
 
-            <button
+            {/* <button
                type="submit"
                className="btn btn-primary"
             >
                Apply Filters
-            </button>
+            </button> */}
 
             <button
                type="button"
