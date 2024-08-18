@@ -20,35 +20,15 @@ const Products = () => {
    });
 
    // Available options
-
    const brandNames = [
-      "TechCorp",
-      "AudioPlus",
-      "VisionTech",
-      "SoundWave",
-      "PlayMaster",
-      "FitTrack",
-      "ZenLife",
-      "StrengthMax",
-      "CookMaster",
-      "KitchenMaster",
-      "CleanBot",
-      "WashPro",
-      "CoolMaster",
-      "BrewMaster",
-      "DryAir",
-      "SewMaster",
-      "HeatMaster",
-      "CleanMaster",
-      "WarmMaster"
-  ];
-  
+      "TechCorp", "AudioPlus", "VisionTech", "SoundWave", "PlayMaster", "FitTrack",
+      "ZenLife", "StrengthMax", "CookMaster", "KitchenMaster", "CleanBot",
+      "WashPro", "CoolMaster", "BrewMaster", "DryAir", "SewMaster", "HeatMaster",
+      "CleanMaster", "WarmMaster"
+   ];
 
    const categories = [
-      "Electronics",
-      "Health & Fitness",
-      "Home Appliances",
-     
+      "Electronics",  "Home Appliances"
    ];
 
    // Function to handle sorting change
@@ -69,6 +49,7 @@ const Products = () => {
    // Function to apply filters
    const applyFilters = (e) => {
       e.preventDefault();
+      console.log("Applying filters:", filters);
       refetch();
    };
 
@@ -93,7 +74,7 @@ const Products = () => {
          const { data } = await axiosPublic(
             `/products?page=${currentPage}&size=${itemPerPage}&search=${search}&sort=${sortOption}&brandName=${filters.brandName}&category=${filters.category}&priceRange=${filters.priceRange}`
          );
-         console.log(data);
+         console.log("Products data:", data); // Debug log
          return data;
       },
    });
@@ -111,26 +92,21 @@ const Products = () => {
 
    const numberOfPages = Math.ceil(productCount / itemPerPage);
 
-   const pages = [
-      ...Array(numberOfPages)
-         .keys()
-         .map((element) => element + 1),
-   ];
+   const pages = Array.from({ length: numberOfPages }, (_, i) => i + 1);
 
-   // handle pagination button
+   // Handle pagination button
    const handlePaginationButton = (value) => {
       setCurrentPage(value);
    };
 
-   // handle search
+   // Handle search
    const handleSearch = (e) => {
       e.preventDefault();
       const text = e.target.search.value;
       setSearch(text);
    };
 
-   if (isLoading)
-      return <span className="loading loading-dots loading-lg"></span>;
+   if (isLoading) return <span className="loading loading-dots loading-lg"></span>;
 
    return (
       <div>
@@ -139,10 +115,10 @@ const Products = () => {
          </h1>
 
          <div className="flex items-center justify-center flex-wrap gap-4">
-            <div className=" my-8">
+            <div className="my-8">
                <div className="w-96 flex flex-col items-center justify-center">
                   <form onSubmit={handleSearch}>
-                     <div className="flex p-1 overflow-hidden border rounded-lg    focus-within:ring focus-within:ring-opacity-40 focus-within:border-blue-400 focus-within:ring-blue-300">
+                     <div className="flex p-1 overflow-hidden border rounded-lg focus-within:ring focus-within:ring-opacity-40 focus-within:border-blue-400 focus-within:ring-blue-300">
                         <input
                            className="px-6 py-2 text-gray-700 placeholder-gray-500 bg-white outline-none focus:placeholder-transparent"
                            type="text"
@@ -150,8 +126,9 @@ const Products = () => {
                            placeholder="Search"
                            aria-label="Search Product"
                         />
-
-                        <button className="px-1 md:px-4 py-3 text-sm font-medium tracking-wider text-gray-100 uppercase transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:bg-gray-600 focus:outline-none">
+                        <button
+                           className="px-1 md:px-4 py-3 text-sm font-medium tracking-wider text-gray-100 uppercase transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:bg-gray-600 focus:outline-none"
+                        >
                            Search
                         </button>
                      </div>
@@ -256,9 +233,13 @@ const Products = () => {
          </form>
 
          <div className="px-2 md:px-0 grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            {products.map((product) => (
-               <ProductCard key={product._id} product={product}></ProductCard>
-            ))}
+            {products.length > 0 ? (
+               products.map((product) => (
+                  <ProductCard key={product._id} product={product} />
+               ))
+            ) : (
+               <p>No products found</p>
+            )}
          </div>
 
          {/* Pagination buttons */}
@@ -266,7 +247,7 @@ const Products = () => {
             <button
                disabled={currentPage === 1}
                onClick={() => handlePaginationButton(currentPage - 1)}
-               className="px-4 py-2 mx-1 text-gray-700 disabled:text-gray-500 capitalize bg-gray-200 rounded-md disabled:cursor-not-allowed disabled:hover:bg-gray-200 disabled:hover:text-gray-500 hover:bg-blue-500  hover:text-white"
+               className="px-4 py-2 mx-1 text-gray-700 disabled:text-gray-500 capitalize bg-gray-200 rounded-md disabled:cursor-not-allowed disabled:hover:bg-gray-200 disabled:hover:text-gray-500 hover:bg-blue-500 hover:text-white"
             >
                <div className="flex items-center -mx-1">
                   <svg
@@ -283,7 +264,6 @@ const Products = () => {
                         d="M7 16l-4-4m0 0l4-4m-4 4h18"
                      />
                   </svg>
-
                   <span className="mx-1">Previous</span>
                </div>
             </button>
@@ -307,7 +287,6 @@ const Products = () => {
             >
                <div className="flex items-center -mx-1">
                   <span className="mx-1">Next</span>
-
                   <svg
                      xmlns="http://www.w3.org/2000/svg"
                      className="w-6 h-6 mx-1 rtl:-scale-x-100"

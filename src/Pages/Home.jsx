@@ -3,8 +3,8 @@ import { Outlet } from 'react-router-dom';
 
 const Home = () => {
     return (
-        <div>
-            <h2 className='text-3xl text-center' >Welcome to ProductFinder</h2>
+        <div className='min-h-[calc(100vh-68px)]'>
+            <h2 className='text-3xl text-center ' >Welcome to ProductFinder</h2>
 
             <div>
                 {/* <Outlet></Outlet> */}
