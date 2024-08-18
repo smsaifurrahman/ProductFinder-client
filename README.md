@@ -1,8 +1,8 @@
-# React + Vite
+To install ProductFinder, follow these steps:
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Clone the repository: git colne https://github.com/smsaifurrahman/ProductPioneer-client.git](https://github.com/smsaifurrahman/ProductPioneer-client
+Navigate to the project directory: cd project-title
+Install dependencies: npm install
+Start the project: npm run dev
+Open your browser and navigate to http://localhost:5000.
+To configure the project, create a .env file in the root directory and add the following variables: API_KEY=your_api_key,
