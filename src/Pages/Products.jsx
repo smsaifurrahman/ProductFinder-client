@@ -1,7 +1,6 @@
 /** @format */
 
 import { useQuery } from "@tanstack/react-query";
-import { data } from "autoprefixer";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 import ProductCard from "../Components/ProductCard";
 import { useState } from "react";
@@ -14,21 +13,48 @@ const Products = () => {
    const [currentPage, setCurrentPage] = useState(1);
    const [search, setSearch] = useState("");
    const [sortOption, setSortOption] = useState("");
-
-   const {
-      data: products = [],
-      isLoading,
-      refetch,
-   } = useQuery({
-      queryKey: ["products", currentPage, itemPerPage, search, sortOption],
-      queryFn: async () => {
-         const { data } = await axiosPublic(
-            `/products?page=${currentPage}&size=${itemPerPage}&search=${search}&sort=${sortOption}`
-         );
-         //   setProductCount(data.length)
-         return data;
-      },
+   const [filters, setFilters] = useState({
+      brandName: "",
+      category: "",
+      priceRange: "", // under100 or above100
    });
+
+   // Available options
+   const brandNames = [
+      "TechCorp",
+      "AudioPlus",
+      "VisionTech",
+      "SoundWave",
+      "PlayMaster",
+      "FitTrack",
+      "ZenLife",
+      "StrengthMax",
+      "KitchenMaster",
+      "CleanBot",
+      "CookMaster",
+      "WashPro",
+      "CoolMaster",
+      "HeatWave",
+      "StyleCo",
+      "Sporty",
+      "TimeTech",
+      "ChicStyle",
+      "UrbanWalk",
+      "ColdGear",
+      "ChargeUp",
+      "BrewMaster",
+      "HomeControl",
+      "ShadeStyle",
+      "UrbanWear",
+      "SmilePro",
+   ];
+
+   const categories = [
+      "Electronics",
+      "Health & Fitness",
+      "Home Appliances",
+      "Fashion",
+   ];
 
    // Function to handle sorting change
    const handleSortChange = (e) => {
@@ -36,11 +62,52 @@ const Products = () => {
       setSortOption(value);
    };
 
-   const { data: productsCount = [] } = useQuery({
-      queryKey: ["products-count", search],
+   // Function to handle filter input change
+   const handleFilterChange = (e) => {
+      const { name, value } = e.target;
+      setFilters((prevFilters) => ({
+         ...prevFilters,
+         [name]: value,
+      }));
+   };
+
+   // Function to apply filters
+   const applyFilters = (e) => {
+      e.preventDefault();
+      refetch();
+   };
+
+   // Function to reset filters
+   const resetFilters = () => {
+      setFilters({
+         brandName: "",
+         category: "",
+         priceRange: "",
+      });
+      setSortOption("");
+      refetch();
+   };
+
+   const {
+      data: products = [],
+      isLoading,
+      refetch,
+   } = useQuery({
+      queryKey: ["products", currentPage, itemPerPage, search, sortOption, filters],
       queryFn: async () => {
-         const { data } = await axiosPublic(`/products-count?search=${search}`);
-         console.log(data);
+         const { data } = await axiosPublic(
+            `/products?page=${currentPage}&size=${itemPerPage}&search=${search}&sort=${sortOption}&brandName=${filters.brandName}&category=${filters.category}&priceRange=${filters.priceRange}`
+         );
+         return data;
+      },
+   });
+
+   const { data: productsCount = [] } = useQuery({
+      queryKey: ["products-count", search, filters],
+      queryFn: async () => {
+         const { data } = await axiosPublic(
+            `/products-count?search=${search}&brandName=${filters.brandName}&category=${filters.category}&priceRange=${filters.priceRange}`
+         );
          setProductCount(data.count);
          return data;
       },
@@ -65,7 +132,6 @@ const Products = () => {
       const text = e.target.search.value;
       setSearch(text);
    };
-   console.log(search);
 
    if (isLoading)
       return <span className="loading loading-dots loading-lg"></span>;
@@ -76,7 +142,7 @@ const Products = () => {
             Product Finder Products
          </h1>
 
-         <div className="flex items-center">
+         <div className="flex items-center justify-center flex-wrap gap-4">
             <div className=" my-8">
                <div className="w-96 flex flex-col items-center justify-center">
                   <form onSubmit={handleSearch}>
@@ -86,7 +152,7 @@ const Products = () => {
                            type="text"
                            name="search"
                            placeholder="Search"
-                           aria-label="Enter Job Title"
+                           aria-label="Search Product"
                         />
 
                         <button className="px-1 md:px-4 py-3 text-sm font-medium tracking-wider text-gray-100 uppercase transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:bg-gray-600 focus:outline-none">
@@ -113,13 +179,93 @@ const Products = () => {
             </div>
          </div>
 
-         <div className=" px-2 md:px-0 grid grid-cols-1 md:grid-cols-3 gap-6">
+         {/* Filters Section */}
+         <form onSubmit={applyFilters} className="flex flex-wrap justify-center gap-4">
+            <div>
+               <select
+                  className="select select-bordered w-full max-w-xs"
+                  name="brandName"
+                  value={filters.brandName}
+                  onChange={handleFilterChange}
+               >
+                  <option disabled value="">
+                     Select Brand
+                  </option>
+                  {brandNames.map((brand) => (
+                     <option key={brand} value={brand}>
+                        {brand}
+                     </option>
+                  ))}
+               </select>
+            </div>
+
+            <div>
+               <select
+                  className="select select-bordered w-full max-w-xs"
+                  name="category"
+                  value={filters.category}
+                  onChange={handleFilterChange}
+               >
+                  <option disabled value="">
+                     Select Category
+                  </option>
+                  {categories.map((category) => (
+                     <option key={category} value={category}>
+                        {category}
+                     </option>
+                  ))}
+               </select>
+            </div>
+
+            <div className="flex flex-col items-start">
+               <span className="font-bold">Price Range:</span>
+               <label className="label cursor-pointer">
+                  <input
+                     type="radio"
+                     name="priceRange"
+                     value="under100"
+                     checked={filters.priceRange === "under100"}
+                     onChange={handleFilterChange}
+                     className="radio radio-primary"
+                  />
+                  <span className="ml-2">Under $100</span>
+               </label>
+               <label className="label cursor-pointer">
+                  <input
+                     type="radio"
+                     name="priceRange"
+                     value="above100"
+                     checked={filters.priceRange === "above100"}
+                     onChange={handleFilterChange}
+                     className="radio radio-primary"
+                  />
+                  <span className="ml-2">Above $100</span>
+               </label>
+            </div>
+
+            <button
+               type="submit"
+               className="btn btn-primary"
+            >
+               Apply Filters
+            </button>
+
+            <button
+               type="button"
+               className="btn btn-secondary"
+               onClick={resetFilters}
+            >
+               Reset Filters
+            </button>
+         </form>
+
+         <div className="px-2 md:px-0 grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
             {products.map((product) => (
-               <ProductCard key={product.id} product={product}></ProductCard>
+               <ProductCard key={product._id} product={product}></ProductCard>
             ))}
          </div>
 
-         {/* Paginations buttons */}
+         {/* Pagination buttons */}
          <div className="flex justify-center my-12">
             <button
                disabled={currentPage === 1}
@@ -142,7 +288,7 @@ const Products = () => {
                      />
                   </svg>
 
-                  <span className="mx-1">previous</span>
+                  <span className="mx-1">Previous</span>
                </div>
             </button>
 
@@ -152,7 +298,7 @@ const Products = () => {
                   key={btnNum}
                   className={`hidden ${
                      currentPage === btnNum ? "bg-blue-500 text-white" : ""
-                  } px-4 py-2 mx-1 transition-colors duration-300 transform  rounded-md sm:inline hover:bg-blue-500  hover:text-white`}
+                  } px-4 py-2 mx-1 transition-colors duration-300 transform rounded-md sm:inline hover:bg-blue-500 hover:text-white`}
                >
                   {btnNum}
                </button>
