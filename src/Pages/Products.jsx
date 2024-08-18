@@ -21,14 +21,14 @@ const Products = () => {
 
    // Available options
    const brandNames = [
-      "TechCorp", "AudioPlus", "VisionTech", "SoundWave", "PlayMaster", "FitTrack",
-      "ZenLife", "StrengthMax", "CookMaster", "KitchenMaster", "CleanBot",
-      "WashPro", "CoolMaster", "BrewMaster", "DryAir", "SewMaster", "HeatMaster",
+      "TechCorp", "AudioPlus", "VisionTech", "SoundWave", "PlayMaster",
+      "ZenLife", "CookMaster", "KitchenMaster", "CleanBot",
+      "WashPro", "CoolMaster", "BrewMaster", "DryAir", "SewMaster",
       "CleanMaster", "WarmMaster"
    ];
 
    const categories = [
-      "Electronics",  "Home Appliances"
+      "Electronics", "Home Appliances"
    ];
 
    // Function to handle sorting change
@@ -53,7 +53,7 @@ const Products = () => {
       refetch();
    };
 
-   // Function to reset filters
+   // Function to reset filters and search
    const resetFilters = () => {
       setFilters({
          brandName: "",
@@ -61,6 +61,7 @@ const Products = () => {
          priceRange: "",
       });
       setSortOption("");
+      setSearch(""); // Reset search input
       refetch();
    };
 
@@ -229,6 +230,15 @@ const Products = () => {
                onClick={resetFilters}
             >
                Reset Filters
+            </button>
+
+            {/* Add Reset Search Button */}
+            <button
+               type="button"
+               className="btn btn-secondary ml-2"
+               onClick={() => setSearch("")}
+            >
+               Reset Search
             </button>
          </form>
 
